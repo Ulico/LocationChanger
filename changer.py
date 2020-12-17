@@ -3,6 +3,7 @@ import subprocess
 import os
 import urllib
 import zipfile
+import time
 
 DEVELOPER_DISK_IMAGE_URL = 'https://github.com/haikieu/xcode-developer-disk-image-all-platforms/raw/master/DiskImages/iPhoneOS.platform/DeviceSupport/{v}.zip'
 
@@ -14,6 +15,7 @@ def coordinates_from_address(address):
         return str(location.latitude) + ' ' + str(location.longitude)
     except:
         print('Cannot find address.')
+        time.sleep(5)
         return None
 
 
@@ -28,6 +30,7 @@ def get_disk_image(version):
         os.remove(download_loc)
     except urllib.error.HTTPError as e:
         print('Could not find Developer Disk Image (iOS ' + version + ').')
+        time.sleep(5)
 
 
 def mount_image(version):
@@ -43,6 +46,7 @@ def mount_image(version):
     except Exception as e:
         if 'Device is locked' in e.output.decode() or 'Could not start' in e.output.decode():
             print('Please unlock your device and try again.')
+            time.sleep(5)
         return False
 
 
@@ -54,8 +58,10 @@ def set_location(coordinates):
     except Exception as e:
         if 'Device is locked' in e.output.decode():
             print('Please unlock your device and try again.')
+            time.sleep(5)
         elif 'No device found' in e.output.decode():
             print('Please connect your device.')
+            time.sleep(5)
         elif 'Make sure a developer disk image is mounted!' in e.output.decode():
             cmd = 'cd ' + os.getcwd() + '\\ & ideviceinfo'
             version = [i for i in subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=True).decode(
